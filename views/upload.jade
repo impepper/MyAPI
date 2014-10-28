@@ -1,0 +1,39 @@
+extends layout
+
+block content
+  h1 步驟一：選擇要辨識的語系
+  p 
+  select(style="width: 140px;")#langmenu
+    option(value="eng") 英文
+    option(value="chi_tra") 繁體中文
+    option(value="chi_sim") 簡體中文
+
+  h1 步驟二：上傳檔案
+  #fileuploader 選擇檔案上傳
+  #eventsmessage
+  script(type='text/javascript').
+    $(document).ready(function(){
+      var lang = "eng"
+      //$("select#langmenu").change(function(){
+        //lang =$(this).val();
+        //alert(lang)
+      //});
+      $( "#langmenu" ).selectmenu();
+      $("#fileuploader").uploadFile({
+        url:"/ocr",
+        fileName:"myfile",
+        allowedTypes:"jpg,jpeg,png,gif",
+        multiple:false,
+        showStatusAfterSuccess:false,
+        showDone:false,
+        dynamicFormData: function(){
+           //var data ="XYZ=1&ABCD=2";
+           var code=$("select#langmenu").val()
+           var data ={"langcode":code};
+         return data;        
+        },
+        onSuccess:function(files,data,xhr){
+           $("#eventsmessage").html("<br/><h1>Text:</h1><br /> "+data.ocrtext+"<br/><br/><hr><h1>Images:</h1>"+"<center><img src='"+data.ocrfile+"' width='80%'/></center>");
+        }
+      })
+    })
