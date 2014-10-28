@@ -11,7 +11,7 @@ router.get('/ocr', function(req, res) {
 	var dv = require('dv');
 	var fs = require('fs');
 	var image = new dv.Image('png', fs.readFileSync('textpage300.png'));
-	var tesseract = new dv.Tesseract('eng', image);
+	var tesseract = new dv.Tesseract('chi_tra', image);
 	var tesstext = tesseract.findText('plain')
 	// console.log(tesstext);
   	res.render('ocrtext', { title: 'OCR', ocrtext:tesstext });
