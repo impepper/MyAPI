@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  h1= title
+  for ocr in filelist
+    if ocr != '.DS_Store'
+      // li #{ocr}
+      img(src="#{ocr}" width="30%") 
+      &nbsp&nbsp
+
+

@@ -7,6 +7,21 @@ router.get('/', function(req, res) {
 });
 
 /* GET home page. */
+router.get('/ocrimage', function(req, res) {
+	var fs = fs || require('fs'),
+		files = fs.readdirSync('./tmpimages');
+	var filelist = filelist || [];
+	files.forEach(function(file) {
+		if (file != '.DS_Store'){
+			filelist.push('./tmpimages/'+file);
+		}
+	});
+
+	// console.log(tesstext);
+  	res.render('ocrimagelist',{title:'OCR-ed Images',filelist:filelist});
+});
+
+/* GET home page. */
 router.get('/ocr', function(req, res) {
 	var dv = require('dv');
 	var fs = require('fs');
@@ -16,6 +31,8 @@ router.get('/ocr', function(req, res) {
 	// console.log(tesstext);
   	res.render('ocrtext', { title: 'OCR', ocrtext:tesstext });
 });
+
+
 
 /* GET home page. */
 router.post('/ocr', function(req, res) {
