@@ -25,9 +25,26 @@ router.get('/ocrimage', function(req, res) {
 router.get('/ocr', function(req, res) {
 	var dv = require('dv');
 	var fs = require('fs');
-	var image = new dv.Image('png', fs.readFileSync('textpage300.png'));
+	var path = require('path');
+	// var lwip = require('lwip')
+	var image = new dv.Image('png', fs.readFileSync('./public/textpage300.png'));
 	var tesseract = new dv.Tesseract('eng', image);
 	var tesstext = tesseract.findText('plain')
+
+	var thresimage = tesseract.thresholdImage().toBuffer(format="png")
+	fs.writeFile('./tmpimages/textpage300_threshold.png', thresimage)
+
+	// var src_path = path.resolve(thresimage)
+	// var target_path = './tmpimages/textpage300_threshold_2.png'
+	// fs.rename(src_path, target_path, function(err) {
+ //        if (err) throw err;
+ //        // delete the temporary file, so that the explicitly set temporary upload dir does not get filled with unwanted files
+ //        // fs.unlink(thresimage, function() {
+ //        //     if (err) throw err;
+ //        //     // res.send('File uploaded to: ' + target_path + ' - ' + req.files.thumbnail.size + ' bytes');
+ //        // });
+ //    });
+
 	// console.log(tesstext);
   	res.render('ocrtext', { title: 'OCR', ocrtext:tesstext });
 });
@@ -55,19 +72,25 @@ router.post('/ocr', function(req, res) {
 		var imagefilename = new Date().getTime()
 		var tempPath = files.myfile.path
 		var targetPath = './tmpimages/'+imagefilename+'.png';
+		var targetPath4threshold = './tmpimages/'+imagefilename+'.png';
 		switch(files.myfile.type) {
 			case 'image/jpeg':
 				imagetype='jpg'
-				targetPath = './tmpimages/'+imagefilename+'.jpg'
+				// targetPath = './tmpimages/'+imagefilename+'.jpg'
+				// targetPath4threshold = './tmpimages/'+imagefilename+'.jpg'
 				break;
 			case 'image/gif':
 				imagetype='gif'
-				targetPath = './tmpimages/'+imagefilename+'.gif'
+				// targetPath = './tmpimages/'+imagefilename+'.gif'
+				// targetPath4threshold = './tmpimages/'+imagefilename+'.gif'
 				break;
 			default:
 				imagetype='png'
-				targetPath = './tmpimages/'+imagefilename+'.png'
+				// targetPath = './tmpimages/'+imagefilename+'.png'
+				// targetPath4threshold = './tmpimages/'+imagefilename+'.png'
 		}
+		targetPath = './tmpimages/'+imagefilename+'.'+imagetype
+		targetPath4threshold = './tmpimages/'+imagefilename+'_threshold.'+imagetype
 
 		//Save Uploaded file to temp folder 
 		fs.rename(tempPath, path.resolve(targetPath), function(err) {
@@ -80,8 +103,12 @@ router.post('/ocr', function(req, res) {
 			var tesstext = tesseract.findText('plain')
 			console.log(tesstext);
 
+			// Log OCR Image (Threshold Ones)
+			var thresimage = tesseract.thresholdImage().toBuffer(format=imagetype)
+			fs.writeFile(targetPath4threshold, thresimage)
+
 			//Make Response Datas
-			res.send({ocrtext:tesstext,ocrfile:targetPath,ocrlang:langcode})
+			res.send({ocrtext:tesstext,ocrfile:targetPath,ocrthresfile:targetPath4threshold,ocrlang:langcode})
 		  	// res.render('ocrtext', { title: 'OCR', ocrtext:tesstext ,ocrfile:'./tmpimages/image.jpg'});
 
         });

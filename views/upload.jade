@@ -33,7 +33,7 @@ block content
          return data;        
         },
         onSuccess:function(files,data,xhr){
-           $("#eventsmessage").html("<br/><h1>Text:</h1><br /> "+data.ocrtext+"<br/><br/><hr><h1>Images:</h1>"+"<center><img src='"+data.ocrfile+"' width='80%'/></center>");
+           $("#eventsmessage").html("<br/><h1>Text:</h1><br /> "+data.ocrtext+"<br/><br/><hr><h1>Images:</h1><center><img src='"+data.ocrfile+"' width='40%'/>&nbsp&nbsp&nbsp&nbsp<img src='"+data.ocrthresfile+"' width='40%'/></center>");
         }
       })
     })
